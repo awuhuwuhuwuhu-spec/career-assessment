@@ -454,9 +454,6 @@ const jumpToQuestion = (index) => {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   border: 1px solid #f1f5f9;
   min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .question-text {
@@ -714,22 +711,18 @@ const jumpToQuestion = (index) => {
 /* Responsive Design */
 @media (max-width: 768px) {
   .test-page {
-    padding: 16px 12px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    padding: 12px;
   }
 
   .container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    max-width: 100%;
   }
 
   .header-section {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    padding: 0;
   }
 
   .header-actions {
@@ -745,96 +738,118 @@ const jumpToQuestion = (index) => {
   }
 
   .test-title {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .test-subtitle {
-    font-size: 13px;
+    font-size: 12px;
+    margin-top: 2px;
   }
 
   .current-number {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .total-number {
+    font-size: 12px;
   }
 
   .progress-bar-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+    height: 3px;
   }
 
   .question-wrapper {
-    margin-bottom: 16px;
-    flex: 1;
+    margin-bottom: 12px;
   }
 
   .question-card {
-    padding: 20px 16px;
-    min-height: auto;
-    border-radius: 16px;
+    padding: 16px;
+    min-height: unset;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .question-text {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.5;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
 
   .likert-options {
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 24px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
   .likert-btn {
     min-width: 100%;
-    padding: 16px 12px;
+    padding: 12px;
+    border-radius: 10px;
   }
 
   .likert-icon {
-    font-size: 32px;
-    margin-bottom: 6px;
+    font-size: 28px;
+    margin-bottom: 4px;
   }
 
   .likert-label {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .option-list {
-    gap: 10px;
-    margin-bottom: 24px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
   .option-button {
-    padding: 14px 16px;
-    font-size: 14px;
+    padding: 12px 14px;
+    font-size: 13px;
     line-height: 1.4;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    border-radius: 10px;
   }
 
   .option-badge {
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
-    margin-right: 12px;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    margin-right: 10px;
   }
 
   .nav-buttons {
-    padding-top: 20px;
-    margin-top: auto;
+    padding-top: 12px;
+    margin-top: 0;
+    border-top: 1px solid #f1f5f9;
   }
 
   .nav-btn {
-    padding: 10px 18px;
-    font-size: 13px;
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 8px;
   }
 
   .exit-section {
-    margin-top: 16px;
+    margin-top: 12px;
   }
 
   .exit-link {
+    font-size: 12px;
+  }
+
+  .loading-icon {
+    font-size: 48px !important;
+  }
+
+  .loading-text {
+    font-size: 16px;
+  }
+
+  .loading-subtext {
     font-size: 13px;
   }
 }
