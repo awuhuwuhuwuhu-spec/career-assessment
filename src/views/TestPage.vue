@@ -711,7 +711,8 @@ const jumpToQuestion = (index) => {
 /* Responsive Design */
 @media (max-width: 768px) {
   .test-page {
-    padding: 12px;
+    padding: 8px;
+    background: white;
   }
 
   .container {
@@ -719,126 +720,157 @@ const jumpToQuestion = (index) => {
   }
 
   .header-section {
-    margin-bottom: 12px;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0;
-  }
-
-  .header-actions {
-    width: 100%;
+    margin-bottom: 8px;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    background: #f8fafc;
+    border-radius: 8px;
     align-items: center;
   }
 
+  .header-section > div:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+
   .overview-btn {
-    font-size: 12px;
-    padding: 6px 12px;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .overview-btn span {
+    display: none;
   }
 
   .test-title {
-    font-size: 15px;
+    font-size: 14px;
+    margin-bottom: 2px;
   }
 
   .test-subtitle {
-    font-size: 12px;
-    margin-top: 2px;
+    font-size: 11px;
+    margin: 0;
+  }
+
+  .question-counter {
+    text-align: right;
+    white-space: nowrap;
   }
 
   .current-number {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .total-number {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .progress-bar-wrapper {
-    margin-bottom: 12px;
-    height: 3px;
+    margin-bottom: 8px;
+    height: 2px;
   }
 
   .question-wrapper {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .question-card {
-    padding: 16px;
+    padding: 12px;
     min-height: unset;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    box-shadow: none;
+    border: 1px solid #e2e8f0;
+    background: #fafafa;
   }
 
   .question-text {
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 12px;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
 
+  /* 李克特量表 - 改为网格布局，充分利用横向空间 */
   .likert-options {
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .likert-btn {
-    min-width: 100%;
-    padding: 12px;
-    border-radius: 10px;
+    min-width: unset;
+    padding: 8px 4px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .likert-icon {
-    font-size: 28px;
-    margin-bottom: 4px;
+    font-size: 24px;
+    margin-bottom: 2px;
   }
 
   .likert-label {
-    font-size: 12px;
+    font-size: 10px;
+    text-align: center;
+    line-height: 1.2;
   }
 
+  /* 选项列表 - 保持纵向，但更紧凑 */
   .option-list {
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .option-button {
-    padding: 12px 14px;
+    padding: 10px 12px;
     font-size: 13px;
-    line-height: 1.4;
+    line-height: 1.3;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
-    border-radius: 10px;
-  }
-
-  .option-badge {
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
-    margin-right: 10px;
-  }
-
-  .nav-buttons {
-    padding-top: 12px;
-    margin-top: 0;
-    border-top: 1px solid #f1f5f9;
-  }
-
-  .nav-btn {
-    padding: 8px 16px;
-    font-size: 12px;
     border-radius: 8px;
   }
 
+  .option-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+    margin-right: 8px;
+  }
+
+  .nav-buttons {
+    padding-top: 10px;
+    margin-top: 0;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .nav-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
   .exit-section {
-    margin-top: 12px;
+    margin-top: 8px;
+    padding: 8px;
   }
 
   .exit-link {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .loading-icon {
@@ -851,6 +883,17 @@ const jumpToQuestion = (index) => {
 
   .loading-subtext {
     font-size: 13px;
+  }
+}
+
+/* 超小屏幕（<360px）- 李克特量表改为3列 */
+@media (max-width: 360px) {
+  .likert-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .likert-label {
+    font-size: 9px;
   }
 }
 </style>
