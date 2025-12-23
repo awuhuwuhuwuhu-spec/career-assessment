@@ -1,11 +1,21 @@
 <template>
   <div class="report-page">
-    <div class="container" v-if="!loading && report">
+    <div class="container" v-if="!loading && report" id="report-content">
       <!-- 头部 -->
       <div class="header">
         <button @click="goBack" class="back-btn">← 返回首页</button>
         <h1 class="title">你的综合测评分析报告</h1>
         <p class="subtitle">生成时间: {{ generatedTime }}</p>
+
+        <!-- 导出按钮组 -->
+        <div class="export-actions">
+          <button @click="handleExportPDF" class="export-btn" :disabled="exporting">
+            📄 {{ exporting ? '导出中...' : '导出PDF' }}
+          </button>
+          <button @click="handleExportImage" class="export-btn" :disabled="exporting">
+            🖼️ {{ exporting ? '导出中...' : '导出图片' }}
+          </button>
+        </div>
       </div>
 
       <div class="report-content">
@@ -239,12 +249,14 @@ import { useReportStore } from '../stores/report'
 import { storageManager } from '../utils/storage'
 import MappingEngine from '../services/mappingEngine'
 import { ElMessage } from 'element-plus'
+import { exportToPDF, exportToImage } from '../utils/exportReport'
 
 const router = useRouter()
 const reportStore = useReportStore()
 
 const loading = ref(true)
 const report = ref(null)
+const exporting = ref(false)
 
 const generatedTime = computed(() => {
   return new Date().toLocaleDateString('zh-CN', {
@@ -312,6 +324,46 @@ onMounted(async () => {
 const goBack = () => {
   router.push('/')
 }
+
+// 导出PDF
+const handleExportPDF = async () => {
+  exporting.value = true
+  try {
+    const filename = `测评报告_${generatedTime.value.replace(/\//g, '-')}.pdf`
+    const result = await exportToPDF('report-content', filename)
+
+    if (result.success) {
+      ElMessage.success('PDF导出成功')
+    } else {
+      ElMessage.error(result.message)
+    }
+  } catch (error) {
+    ElMessage.error('PDF导出失败：' + error.message)
+    console.error('PDF导出错误:', error)
+  } finally {
+    exporting.value = false
+  }
+}
+
+// 导出图片
+const handleExportImage = async () => {
+  exporting.value = true
+  try {
+    const filename = `测评报告_${generatedTime.value.replace(/\//g, '-')}.png`
+    const result = await exportToImage('report-content', filename)
+
+    if (result.success) {
+      ElMessage.success('图片导出成功')
+    } else {
+      ElMessage.error(result.message)
+    }
+  } catch (error) {
+    ElMessage.error('图片导出失败：' + error.message)
+    console.error('图片导出错误:', error)
+  } finally {
+    exporting.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -361,8 +413,51 @@ const goBack = () => {
 .subtitle {
   color: #94a3b8;
   font-size: 14px;
-  margin: 0;
+  margin: 0 0 20px 0;
 }
+
+/* 导出按钮组 */
+.export-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.export-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+}
+
+.export-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+.export-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media print {
+  .export-actions,
+  .back-btn {
+    display: none;
+  }
+}
+
 
 /* Grid Layout */
 .grid-layout {

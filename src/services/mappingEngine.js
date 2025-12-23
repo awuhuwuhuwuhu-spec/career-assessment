@@ -8,6 +8,37 @@ import {
 } from '../data/mappingRules'
 
 /**
+ * 专业硬性要求配置
+ * 定义某些专业对学科效能感和智能的最低要求
+ */
+const MAJOR_REQUIREMENTS = {
+  '物理学': { subject: { '物理': 3.5 } },
+  '应用物理': { subject: { '物理': 3.3 } },
+  '数学与应用数学': { subject: { '数学': 3.8 } },
+  '化学': { subject: { '化学': 3.5 } },
+  '应用化学': { subject: { '化学': 3.3 } },
+  '生物科学': { subject: { '生物': 3.5 } },
+  '临床医学': {
+    subject: { '生物': 3.8, '化学': 3.5 },
+    intelligence: { 'Interpersonal': 55 }
+  },
+  '口腔医学': {
+    subject: { '生物': 3.5, '化学': 3.3 },
+    intelligence: { 'Bodily-Kinesthetic': 50 }
+  },
+  '汉语言文学': { subject: { '语文': 3.5 } },
+  '英语': { subject: { '英语': 3.8 } },
+  '法学': {
+    subject: { '政治': 3.0 },
+    intelligence: { 'Linguistic': 55 }
+  },
+  '计算机科学与技术': {
+    subject: { '数学': 3.3 },
+    intelligence: { 'Logical-Mathematical': 50 }
+  }
+}
+
+/**
  * 映射引擎类
  * 负责综合所有测评结果，生成专业推荐、职业建议、选科方案
  */
@@ -63,14 +94,15 @@ export class MappingEngine {
   }
 
   /**
-   * 推荐专业（核心算法）
+   * 推荐专业（核心算法 - 优化版）
+   * 权重总计100%：霍兰德40% + MBTI15% + 智能28% + 学科17%
    */
   recommendMajors() {
     const majorScores = new Map()
 
-    // 1. 基于霍兰德代码
+    // 1. 基于霍兰德代码 (总计40%)
     this.holland.topThree.forEach((dim, index) => {
-      const weight = [40, 30, 20][index]
+      const weight = [20, 12, 8][index]  // 第一20%, 第二12%, 第三8%
       const dimData = hollandMapping.dimensions[dim.dimension]
 
       if (dimData && dimData.majors) {
@@ -80,17 +112,17 @@ export class MappingEngine {
       }
     })
 
-    // 2. 基于MBTI
+    // 2. 基于MBTI (15%)
     const mbtiData = mbtiMapping[this.mbti.type]
     if (mbtiData && mbtiData.majorCategories) {
       mbtiData.majorCategories.forEach(category => {
-        this.addScore(majorScores, category, 20, 'mbti')
+        this.addScore(majorScores, category, 15, 'mbti')
       })
     }
 
-    // 3. 基于多元智能
+    // 3. 基于多元智能 (总计28%)
     this.intelligence.topThree.forEach((intel, index) => {
-      const weight = [25, 15, 10][index]
+      const weight = [15, 8, 5][index]  // 第一15%, 第二8%, 第三5%
       const intelData = intelligenceMapping[intel.name]
 
       if (intelData && intelData.majors) {
@@ -100,9 +132,9 @@ export class MappingEngine {
       }
     })
 
-    // 4. 基于学科效能感
+    // 4. 基于学科效能感 (总计17%)
     this.subject.topThree.forEach((sub, index) => {
-      const weight = [20, 15, 10][index]
+      const weight = [10, 5, 2][index]  // 第一10%, 第二5%, 第三2%
       const relatedMajors = this.getRelatedMajorsBySubject(sub.name)
 
       relatedMajors.forEach(major => {
@@ -110,8 +142,13 @@ export class MappingEngine {
       })
     })
 
+    // 阈值过滤：检查专业是否满足硬性要求
+    const filtered = Array.from(majorScores.entries()).filter(([major, data]) => {
+      return this.checkMajorRequirements(major)
+    })
+
     // 排序并返回前10个
-    const sorted = Array.from(majorScores.entries())
+    const sorted = filtered
       .sort((a, b) => b[1].totalScore - a[1].totalScore)
       .slice(0, 10)
 
@@ -124,14 +161,15 @@ export class MappingEngine {
   }
 
   /**
-   * 推荐职业（核心算法）
+   * 推荐职业（核心算法 - 优化版）
+   * 权重总计100%：霍兰德30% + MBTI25% + 智能20% + 价值观20% + VARK5%
    */
   recommendCareers() {
     const careerScores = new Map()
 
-    // 1. 霍兰德职业映射
+    // 1. 霍兰德职业映射 (总计30%)
     this.holland.topThree.forEach((dim, index) => {
-      const weight = [35, 25, 15][index]
+      const weight = [15, 10, 5][index]  // 第一15%, 第二10%, 第三5%
       const dimData = hollandMapping.dimensions[dim.dimension]
 
       if (dimData && dimData.careers) {
@@ -141,17 +179,17 @@ export class MappingEngine {
       }
     })
 
-    // 2. MBTI职业映射
+    // 2. MBTI职业映射 (25%)
     const mbtiData = mbtiMapping[this.mbti.type]
     if (mbtiData && mbtiData.careers) {
       mbtiData.careers.forEach(career => {
-        this.addScore(careerScores, career, 30, 'mbti')
+        this.addScore(careerScores, career, 25, 'mbti')
       })
     }
 
-    // 3. 多元智能职业映射
+    // 3. 多元智能职业映射 (总计20%)
     this.intelligence.topThree.forEach((intel, index) => {
-      const weight = [20, 15, 10][index]
+      const weight = [10, 7, 3][index]  // 第一10%, 第二7%, 第三3%
       const intelData = intelligenceMapping[intel.name]
 
       if (intelData && intelData.careers) {
@@ -161,9 +199,9 @@ export class MappingEngine {
       }
     })
 
-    // 4. 职业价值观筛选
+    // 4. 职业价值观筛选 (总计20%)
     this.values.topFive.forEach((value, index) => {
-      const weight = [25, 20, 15, 10, 5][index]
+      const weight = [8, 5, 4, 2, 1][index]  // 总计20%
       const factorData = careerValueMapping.factors[value.name]
 
       if (factorData) {
@@ -185,6 +223,28 @@ export class MappingEngine {
         }
       }
     })
+
+    // 5. 新增：VARK学习风格加分 (5%)
+    const varkBonus = this.getVarkCareerBonus()
+    varkBonus.forEach((bonus, career) => {
+      if (careerScores.has(career)) {
+        const data = careerScores.get(career)
+        data.totalScore += bonus
+        data.sources.push('vark')
+      } else {
+        // 如果该职业还未被推荐，也给予一定权重
+        this.addScore(careerScores, career, bonus, 'vark')
+      }
+    })
+
+    // 6. 冲突检测：MBTI与价值观冲突降权
+    const conflictResult = this.detectMBTIValueConflict()
+    if (conflictResult.hasConflict) {
+      // 对所有职业应用惩罚系数
+      careerScores.forEach((data, career) => {
+        data.totalScore *= conflictResult.penalty
+      })
+    }
 
     // 排序并返回前15个
     const sorted = Array.from(careerScores.entries())
@@ -402,6 +462,113 @@ export class MappingEngine {
   }
 
   // ========== 辅助方法 ==========
+
+  /**
+   * 检查专业是否满足硬性要求
+   */
+  checkMajorRequirements(major) {
+    const requirements = MAJOR_REQUIREMENTS[major]
+    if (!requirements) {
+      return true  // 没有硬性要求的专业默认通过
+    }
+
+    // 检查学科效能感要求
+    if (requirements.subject) {
+      for (const [subjectName, minScore] of Object.entries(requirements.subject)) {
+        const actualScore = this.subject.subjectScores[subjectName]
+        if (!actualScore || parseFloat(actualScore) < minScore) {
+          return false  // 不满足学科要求
+        }
+      }
+    }
+
+    // 检查智能要求
+    if (requirements.intelligence) {
+      for (const [intelName, minScore] of Object.entries(requirements.intelligence)) {
+        const intelData = this.intelligence.normalizedScores[intelName]
+        if (!intelData || intelData < minScore) {
+          return false  // 不满足智能要求
+        }
+      }
+    }
+
+    return true
+  }
+
+  /**
+   * 检测MBTI与职业价值观的冲突
+   * 返回冲突惩罚系数（0.5-1.0，1.0表示无冲突）
+   */
+  detectMBTIValueConflict() {
+    const conflicts = []
+    const mbtiType = this.mbti.type
+    const topValues = this.values.topFive.slice(0, 3).map(v => v.name)
+
+    // 内向型(I) + 高"社会交往"价值观 → 轻度冲突
+    if (mbtiType.includes('I') && topValues.includes('社会交往')) {
+      conflicts.push({ type: 'I-社交', penalty: 0.85 })
+    }
+
+    // 外向型(E) + 高"自主性"或"工作生活平衡" → 轻度冲突
+    if (mbtiType.includes('E') && (topValues.includes('自主性') || topValues.includes('工作生活平衡'))) {
+      conflicts.push({ type: 'E-独处', penalty: 0.9 })
+    }
+
+    // 感性(F) + 高"经济报酬"排第一 → 轻度冲突
+    if (mbtiType.includes('F') && this.values.topFive[0].name === '经济报酬') {
+      conflicts.push({ type: 'F-金钱', penalty: 0.88 })
+    }
+
+    // 理性(T) + 高"利他主义"排第一 → 轻度冲突
+    if (mbtiType.includes('T') && this.values.topFive[0].name === '利他主义') {
+      conflicts.push({ type: 'T-利他', penalty: 0.88 })
+    }
+
+    // 判断型(J) + 高"多样性"价值观 → 轻度冲突
+    if (mbtiType.includes('J') && topValues.includes('多样性')) {
+      conflicts.push({ type: 'J-多样', penalty: 0.9 })
+    }
+
+    // 知觉型(P) + 高"安全感"排第一 → 中度冲突
+    if (mbtiType.includes('P') && this.values.topFive[0].name === '安全感') {
+      conflicts.push({ type: 'P-安全', penalty: 0.75 })
+    }
+
+    // 返回最低惩罚系数（如果有多个冲突，取最严重的）
+    if (conflicts.length === 0) {
+      return { hasConflict: false, penalty: 1.0, conflicts: [] }
+    }
+
+    const minPenalty = Math.min(...conflicts.map(c => c.penalty))
+    return { hasConflict: true, penalty: minPenalty, conflicts }
+  }
+
+  /**
+   * 根据VARK学习风格为职业加分
+   * V(视觉) → 设计、建筑、影视类
+   * A(听觉) → 教育、咨询、音乐类
+   * R(读写) → 文科、法律、编辑类
+   * K(动觉) → 体育、医学、工程实践类
+   */
+  getVarkCareerBonus() {
+    const bonusMap = new Map()
+    const dominantStyle = this.vark.dominant
+    const bonusValue = 5  // 5%权重
+
+    const varkCareerMapping = {
+      V: ['设计师', '建筑师', '摄影师', '导演', '美术师', '产品经理'],
+      A: ['教师', '培训师', '心理咨询师', '音乐家', '主持人', '演说家'],
+      R: ['作家', '编辑', '律师', '研究员', '记者', '翻译'],
+      K: ['运动员', '外科医生', '工程师', '健身教练', '舞蹈家', '理疗师']
+    }
+
+    const matchedCareers = varkCareerMapping[dominantStyle] || []
+    matchedCareers.forEach(career => {
+      bonusMap.set(career, bonusValue)
+    })
+
+    return bonusMap
+  }
 
   addScore(scoreMap, item, points, source) {
     if (!scoreMap.has(item)) {
