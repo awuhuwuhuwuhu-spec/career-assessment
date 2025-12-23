@@ -7,9 +7,15 @@
           <h2 class="test-title">{{ assessmentName }}</h2>
           <p class="test-subtitle">请根据你的直觉选择最符合的选项</p>
         </div>
-        <div class="question-counter">
-          <span class="current-number">{{ String(currentIndex + 1).padStart(2, '0') }}</span>
-          <span class="total-number">/ {{ questions.length }}</span>
+        <div class="header-actions">
+          <button class="overview-btn" @click="showOverview = true">
+            <el-icon><List /></el-icon>
+            <span>答题概览</span>
+          </button>
+          <div class="question-counter">
+            <span class="current-number">{{ String(currentIndex + 1).padStart(2, '0') }}</span>
+            <span class="total-number">/ {{ questions.length }}</span>
+          </div>
         </div>
       </div>
 
@@ -105,6 +111,15 @@
           保存进度并退出
         </button>
       </div>
+
+      <!-- Question Overview -->
+      <QuestionOverview
+        v-model="showOverview"
+        :questions="questions"
+        :answers="answers"
+        :current-index="currentIndex"
+        @jump-to="jumpToQuestion"
+      />
     </div>
 
     <!-- Loading State -->
@@ -125,7 +140,8 @@ import { csvParser } from '../services/csvParser'
 import { scoringEngine } from '../services/scoringEngine'
 import { storageManager } from '../utils/storage'
 import { ElMessage } from 'element-plus'
-import { Loading, ArrowLeft, ArrowRight, Check, CircleCheck } from '@element-plus/icons-vue'
+import { Loading, ArrowLeft, ArrowRight, Check, CircleCheck, List } from '@element-plus/icons-vue'
+import QuestionOverview from '../components/QuestionOverview.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -139,6 +155,7 @@ const answers = ref({})
 const currentIndex = ref(0)
 const currentAnswer = ref(null)
 const autoNext = ref(false) // 是否正在自动跳题
+const showOverview = ref(false) // 是否显示答题概览
 
 // 当前测评信息
 const assessment = computed(() =>
@@ -314,6 +331,11 @@ const submitAssessment = () => {
 const goBack = () => {
   router.push('/')
 }
+
+// 跳转到指定题目
+const jumpToQuestion = (index) => {
+  currentIndex.value = index
+}
 </script>
 
 <style scoped>
@@ -336,6 +358,41 @@ const goBack = () => {
   align-items: flex-start;
   margin-bottom: 32px;
   padding: 0 8px;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.overview-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.overview-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.overview-btn .el-icon {
+  font-size: 16px;
 }
 
 .test-title {
@@ -657,50 +714,127 @@ const goBack = () => {
 /* Responsive Design */
 @media (max-width: 768px) {
   .test-page {
-    padding: 20px 16px;
+    padding: 16px 12px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .header-section {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .overview-btn {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 
   .test-title {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .test-subtitle {
+    font-size: 13px;
   }
 
   .current-number {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .progress-bar-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .question-wrapper {
+    margin-bottom: 16px;
+    flex: 1;
   }
 
   .question-card {
-    padding: 32px 24px;
-    min-height: 350px;
+    padding: 20px 16px;
+    min-height: auto;
+    border-radius: 16px;
   }
 
   .question-text {
-    font-size: 20px;
-    margin-bottom: 32px;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .likert-options {
     flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   .likert-btn {
     min-width: 100%;
+    padding: 16px 12px;
+  }
+
+  .likert-icon {
+    font-size: 32px;
+    margin-bottom: 6px;
+  }
+
+  .likert-label {
+    font-size: 13px;
+  }
+
+  .option-list {
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   .option-button {
-    padding: 16px 20px;
-    font-size: 15px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  .option-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    margin-right: 12px;
   }
 
   .nav-buttons {
-    padding-top: 24px;
+    padding-top: 20px;
+    margin-top: auto;
   }
 
   .nav-btn {
-    padding: 10px 20px;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .exit-section {
+    margin-top: 16px;
+  }
+
+  .exit-link {
     font-size: 13px;
   }
 }
