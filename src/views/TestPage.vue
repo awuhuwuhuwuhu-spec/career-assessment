@@ -711,12 +711,15 @@ const jumpToQuestion = (index) => {
 /* Responsive Design */
 @media (max-width: 768px) {
   .test-page {
-    padding: 8px;
+    padding: 0;
     background: white;
+    min-height: 100vh;
   }
 
   .container {
     max-width: 100%;
+    width: 100%;
+    padding: 8px;
   }
 
   .header-section {
@@ -871,6 +874,10 @@ const jumpToQuestion = (index) => {
 
   .exit-link {
     font-size: 11px;
+  }
+
+  .loading-state {
+    padding: 20px;
   }
 
   .loading-icon {
