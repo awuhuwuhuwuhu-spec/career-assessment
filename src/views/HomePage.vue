@@ -187,6 +187,19 @@ const clearAllData = () => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+}
+
+/* 移动端全宽布局 */
+@media (max-width: 768px) {
+  .home-page {
+    padding: 16px;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
 }
 
 /* Welcome Section */

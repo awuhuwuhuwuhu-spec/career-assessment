@@ -3,7 +3,7 @@
     v-model="visible"
     title="答题概览"
     direction="rtl"
-    size="400px"
+    :size="drawerSize"
     :close-on-click-modal="true"
   >
     <div class="overview-container">
@@ -83,6 +83,11 @@ const emit = defineEmits(['update:modelValue', 'jump-to'])
 const visible = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
+})
+
+// 响应式drawer尺寸
+const drawerSize = computed(() => {
+  return window.innerWidth <= 768 ? '90%' : '400px'
 })
 
 // 已答题数量
@@ -248,9 +253,17 @@ const jumpToQuestion = (index) => {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .overview-container {
+    padding: 0;
+  }
+
   .questions-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .question-item {
+    border-radius: 10px;
   }
 
   .question-number {
@@ -259,10 +272,30 @@ const jumpToQuestion = (index) => {
 
   .stats-card {
     padding: 20px 16px;
+    margin-bottom: 20px;
   }
 
   .stat-value {
     font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .questions-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .stats-card {
+    padding: 16px 12px;
+  }
+
+  .stat-value {
+    font-size: 20px;
   }
 }
 </style>

@@ -320,11 +320,13 @@ const goBack = () => {
   min-height: 100vh;
   background: #f8fafc;
   padding: 40px 20px;
+  width: 100%;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 /* Header */
@@ -1007,15 +1009,41 @@ const goBack = () => {
 /* Responsive */
 @media (max-width: 768px) {
   .report-page {
-    padding: 20px 16px;
+    padding: 16px;
+    background: white;
+  }
+
+  .container {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+  }
+
+  .header {
+    margin-bottom: 24px;
   }
 
   .title {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 12px;
   }
 
   .section-title {
     font-size: 16px;
+  }
+
+  .core-persona-card,
+  .info-card,
+  .major-recommendations-card,
+  .careers-section,
+  .ai-analysis-section,
+  .subject-section,
+  .learning-methods-section {
+    padding: 20px;
+    border-radius: 16px;
   }
 
   .persona-badge {
@@ -1027,12 +1055,61 @@ const goBack = () => {
     font-size: 32px;
   }
 
+  .persona-title {
+    font-size: 18px;
+  }
+
+  .persona-description {
+    font-size: 14px;
+  }
+
   .info-value {
     font-size: 24px;
   }
 
   .ai-analysis-section {
     padding: 24px;
+  }
+
+  .grid-layout {
+    gap: 16px;
+  }
+
+  .section-header {
+    margin-bottom: 16px;
+  }
+
+  .major-item,
+  .career-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .export-actions {
+    flex-direction: column;
+  }
+
+  .export-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-page {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .trait-tags {
+    gap: 6px;
+  }
+
+  .trait-tag {
+    font-size: 11px;
+    padding: 4px 8px;
   }
 }
 </style>

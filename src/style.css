@@ -24,10 +24,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -59,10 +59,17 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 桌面端容器限制 */
+@media (min-width: 1024px) {
+  #app > * {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
 }
 
 @media (prefers-color-scheme: light) {

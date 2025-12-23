@@ -344,11 +344,13 @@ const jumpToQuestion = (index) => {
   min-height: 100vh;
   background: #f8fafc;
   padding: 40px 20px;
+  width: 100%;
 }
 
 .container {
   max-width: 768px;
   margin: 0 auto;
+  width: 100%;
 }
 
 /* Header Section */
@@ -714,12 +716,13 @@ const jumpToQuestion = (index) => {
     padding: 0;
     background: white;
     min-height: 100vh;
+    width: 100%;
   }
 
   .container {
     max-width: 100%;
     width: 100%;
-    padding: 8px;
+    padding: 12px;
   }
 
   .header-section {
